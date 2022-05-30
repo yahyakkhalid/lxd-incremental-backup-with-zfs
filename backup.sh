@@ -31,13 +31,13 @@ ls /var/snap/lxd/common/lxd/storage-pools/$ZFSPOOL/containers > $DIR/$DATE/lxd/l
 
 echo "Backing up -" >> $LOGS_FILE
 
-# Check if a full backup has already been done.
+# Check if a full backup has already been done. Else do a full backup.
 if [[ -z $(zfs list -t snapshot | grep backup) ]]; then
   echo "	full backup..." >> $LOGS_FILE
   zfs snapshot -r $ZFSPOOL@backup
   zfs send -R $ZFSPOOL@backup | xz > $DIR/$DATE/$ZFSPOOL/backup.img.xz
 else
-  # Check if a snapshot is already taken place.
+  # Check if a snapshot is already taken place. Else the last "snap" is a full backup.
   if [[ -z $(zfs list -t snapshot | grep snap) ]]; then
     past_snap="backup"
   else
